@@ -6,6 +6,13 @@ pipeline {
     }
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/vardhanacharya/program2.git'
+            }
+        }
+
         stage('Build Maven') {
             steps {
                 sh 'mvn clean package'
@@ -23,9 +30,16 @@ pipeline {
                 sh '''
                 docker swarm init || true
                 docker service rm java-service || true
-                docker run --rm java-cicd-app:latest
+                docker service create --name java-service --replicas 1 java-cicd-app:latest
                 '''
             }
         }
+
+        stage('Check Service') {
+            steps {
+                sh 'docker service ls'
+                sh 'docker service ps java-service'
+            }
+        }
     }
-}}
+}
