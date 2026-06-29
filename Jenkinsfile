@@ -20,10 +20,12 @@ pipeline {
 
         stage('Deploy Docker Swarm') {
             steps {
-                sh 'docker swarm init || true'
-                sh 'docker service rm java-service || true'
-                sh 'docker service create --name java-service --restart-condition none java-cicd-app:latest'
+                sh '''
+                docker swarm init || true
+                docker service rm java-service || true
+                docker run --rm java-cicd-app:latest
+                '''
             }
         }
     }
-}
+}}
