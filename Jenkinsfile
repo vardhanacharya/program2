@@ -14,7 +14,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t java-cicd-app .'
+                sh 'docker build -t java-cicd-app:latest .'
             }
         }
 
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 sh 'docker swarm init || true'
                 sh 'docker service rm java-service || true'
-                sh 'docker service create --name java-service --replicas 2 java-cicd-app'
+                sh 'docker service create --name java-service --restart-condition none java-cicd-app:latest'
             }
         }
     }
